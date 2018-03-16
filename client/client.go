@@ -6,6 +6,7 @@ import(
     "os"
     "time"
     "encoding/json"
+    "../core"
 )
 
 type Client struct{
@@ -27,7 +28,7 @@ type Message struct{
 
 func (c *Client) func_sendMessage(sid int,msg string){
 
-	m:= Message{
+	m:= core.Message{
 		Status:2,
 		UserID:c.userID,
 		UserName: c.userName,
@@ -46,7 +47,7 @@ func (c *Client) func_sendMessage(sid int,msg string){
 func (c *Client) sendMessage() {
     for c.gkey {
         msg := <- c.sendMessages
-		m:= Message{
+		m:= core.Message{
 			Status:1,
 			UserID:c.userID,
 			UserName: c.userName,
@@ -91,7 +92,7 @@ func (c *Client) printMessage() {
     //var msg string
     for c.gkey {
         msg := <- c.receiveMessages
-        var m Message
+        var m core.Message
         json.Unmarshal([]byte(msg),&m)
         fmt.Println(m.UserName,":",m.Content)
     }

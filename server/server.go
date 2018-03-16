@@ -5,6 +5,7 @@ import(
     "net"
     "os"
     "encoding/json"
+    "../core"
 )
 
 const(
@@ -22,12 +23,6 @@ type Client struct{
     userName string
     userAddr *net.UDPAddr
 
-}
-type Message struct{
-    Status int
-    UserID int
-    UserName string
-    Content string
 }
 
 func (s *Server) handleMessage(){
@@ -63,7 +58,7 @@ func (s *Server) handleMessage(){
 
 }
 //这里还要判断一下数组的长度，
-func (s *Server) analyzeMessage(msg string) (m Message) {
+func (s *Server) analyzeMessage(msg string) (m core.Message) {
     json.Unmarshal([]byte(msg), &m)
     return
 }

@@ -135,11 +135,6 @@ func main(){
     //fmt.Println(c)
     defer c.conn.Close()
 
-
-    //发送进入聊天室消息,类型1，###1##uid##uName##进入聊天室###
-    //messagestr := fmt.Sprintf("###1##%d##%s###", c.userID, c.userName)
-    //_,err = c.conn.Write([]byte(messagestr))
-    //checkError(err)
     c.func_sendMessage(1,c.userName + "进入聊天室")
 
     //go c.getMessage()

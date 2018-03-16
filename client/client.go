@@ -9,6 +9,10 @@ import(
     "../core"
 )
 
+const(
+	KEY string = "chatroom12345678"
+)
+
 type Client struct{
     conn *net.UDPConn
     gkey bool   //用来判断用户退出
@@ -16,6 +20,7 @@ type Client struct{
     userName string
     sendMessages chan string
     receiveMessages chan string
+    chiper core.Chiper
 }
 
 type Message struct{
@@ -40,7 +45,10 @@ func (c *Client) func_sendMessage(sid int,msg string){
 		fmt.Println("json err:", err)
 	}
 
-	_, err = c.conn.Write([]byte(string(str)))
+	str= []byte(string(str))
+	str, err = c.chiper.EncryptMessage(str)
+
+	_, err = c.conn.Write(str)
     checkError(err,"func_sendMessage")
 }
 
@@ -58,13 +66,16 @@ func (c *Client) sendMessage() {
 		if err != nil {
 			fmt.Println("json err:", err)
 		}
-        _,err = c.conn.Write([]byte(string(str)))
+
+		str= []byte(string(str))
+		str, err = c.chiper.EncryptMessage(str)
+
+		_,err = c.conn.Write(str)
         checkError(err,"sendMessage")
     }
 
 }
 
-//接收
 func (c *Client) receiveMessage() {
     var buf [512]byte
     for c.gkey {
@@ -74,7 +85,7 @@ func (c *Client) receiveMessage() {
     }
     
 }
-//获得输入并处理之，这里有Println
+
 func (c *Client) getMessage() {
     var msg string
     for c.gkey {
@@ -87,13 +98,14 @@ func (c *Client) getMessage() {
         }
     }
 }
-//打印，这里有Println
+
 func (c *Client) printMessage() {
     //var msg string
     for c.gkey {
         msg := <- c.receiveMessages
+		dmsg,_:= c.chiper.DecryptMessage([]byte(msg))
         var m core.Message
-        json.Unmarshal([]byte(msg),&m)
+        json.Unmarshal(dmsg,&m)
         fmt.Println(m.UserName,":",m.Content)
     }
 }
@@ -120,6 +132,7 @@ func main(){
 
     var c Client
     c.gkey = true
+    c.chiper.Key = []byte (KEY)
     c.sendMessages = make(chan string)
     c.receiveMessages = make(chan string)
 

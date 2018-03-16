@@ -9,13 +9,15 @@ import(
 )
 
 const(
-    port string = ":1200"
+    PORT string = ":1200"
+    KEY string = "chatroom12345678"
 )
 
 type Server struct{
     conn *net.UDPConn
     messages chan string
     clients map [int]Client
+    chiper core.Chiper
 }
 
 type Client struct{
@@ -31,9 +33,9 @@ func (s *Server) handleMessage(){
     if err != nil{
         return
     }
+    msg := buf[0:n]
     //分析消息
-    msg := string(buf[0:n])
-    fmt.Println("收到数据包", msg)
+    fmt.Println("收到数据包",msg)
     m := s.analyzeMessage(msg)
     switch m.Status{
         //进入聊天室消息
@@ -43,25 +45,27 @@ func (s *Server) handleMessage(){
             c.userID = m.UserID
             c.userName = m.UserName
             s.clients[c.userID] = c //添加用户
-            s.messages <- msg
+            s.messages <- string(msg)
             fmt.Println("3")
         //用户发送消息
         case 2:
-            s.messages <- msg
+            s.messages <- string(msg)
         //client发来的退出消息
         case 3:
             delete(s.clients, m.UserID)
-            s.messages <- msg
+            s.messages <- string(msg)
         default:
-            fmt.Println("未识别消息", msg)
+            fmt.Println("未识别消息", string(msg))
     }
 
 }
-//这里还要判断一下数组的长度，
-func (s *Server) analyzeMessage(msg string) (m core.Message) {
-    json.Unmarshal([]byte(msg), &m)
+
+func (s *Server) analyzeMessage(msg []byte) (m core.Message) {
+    msg,_ = s.chiper.DecryptMessage(msg)
+    json.Unmarshal(msg, &m)
     return
 }
+
 func (s *Server) sendMessage() {
     for{
         msg := <- s.messages
@@ -85,7 +89,7 @@ func checkError(err error){
 }
 
 func main(){
-    udpAddr, err := net.ResolveUDPAddr("udp4",port)
+    udpAddr, err := net.ResolveUDPAddr("udp4",PORT)
     checkError(err)
 
     var s Server
@@ -93,6 +97,7 @@ func main(){
     s.clients =make(map[int]Client,0)
 
     s.conn,err = net.ListenUDP("udp",udpAddr)
+    s.chiper.Key = []byte(KEY)
     checkError(err)
 
     go s.sendMessage()

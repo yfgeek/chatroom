@@ -32,13 +32,10 @@ type Message struct{
 
 func (s *Server) handleMessage(){
     var buf [512]byte
-
-    fmt.Println("1\n")
     n, addr, err := s.conn.ReadFromUDP(buf[0:])
     if err != nil{
         return
     }
-    fmt.Println("2\n")
     //分析消息
     msg := string(buf[0:n])
     fmt.Println("收到数据包", msg)
@@ -64,38 +61,10 @@ func (s *Server) handleMessage(){
             fmt.Println("未识别消息", msg)
     }
 
-    //fmt.Println(n,addr,string(buf[0:n]))
-
-
 }
 //这里还要判断一下数组的长度，
 func (s *Server) analyzeMessage(msg string) (m Message) {
     json.Unmarshal([]byte(msg), &m)
-    //s1 := strings.Split(msg,"###")
-	//
-    //    s2 := strings.Split(s1[1],"##")
-    //    //fmt.Println(s2)
-    //    switch s2[0]{
-    //        case "1":
-    //            m.status,_ = strconv.Atoi(s2[0])
-    //            fmt.Println("44")
-    //            m.userID,_ = strconv.Atoi(s2[1])
-    //            m.userName = s2[2]
-    //            fmt.Println(m)
-    //            return
-    //        case "2":
-    //            m.status,_ = strconv.Atoi(s2[0])
-    //            m.userID,_ = strconv.Atoi(s2[1])
-    //            m.content = s2[2]
-    //            return
-    //        case "3":
-    //            m.status,_ = strconv.Atoi(s2[0])
-    //            m.userID,_ = strconv.Atoi(s2[1])
-    //            return
-    //        default:
-    //            fmt.Println("未识别消息", msg)
-    //            return
-    //    }
     return
 }
 func (s *Server) sendMessage() {

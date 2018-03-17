@@ -20,6 +20,6 @@
 
 
 
-本项目参考自[golang-udp-chat](http://github.com/golang-udp-chat)
+本项目参考自[https://github.com/digitalis-io/golang-udp-chat](http://github.com/golang-udp-chat)
 
  

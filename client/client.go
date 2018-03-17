@@ -20,7 +20,7 @@ type Client struct{
     userName string
     sendMessages chan string
     receiveMessages chan string
-    chiper core.Chiper
+    chiper core.Cipher
 }
 
 type Message struct{

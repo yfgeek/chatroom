@@ -8,33 +8,33 @@ import (
 	"os"
 )
 
-type Chiper struct{
+type Cipher struct{
 	Key []byte
 }
 
 
-func (c *Chiper) EncryptMessage(msg []byte) ([]byte, error){
-	chiper, err := aes.NewCipher(c.Key)
+func (c *Cipher) EncryptMessage(msg []byte) ([]byte, error){
+	block, err := aes.NewCipher(c.Key)
 	if err != nil {
 		fmt.Printf("Error: NewCipher(%d bytes) = %s", len(c.Key), err)
 		os.Exit(-1)
 	}
-	blockSize := chiper.BlockSize()
+	blockSize := block.BlockSize()
 	msg = cPKCS5Padding(msg, blockSize)
-	blockMode := cipher.NewCBCEncrypter(chiper, c.Key[:blockSize])
+	blockMode := cipher.NewCBCEncrypter(block, c.Key[:blockSize])
 	crypted := make([]byte, len(msg))
 	blockMode.CryptBlocks(crypted, msg)
 	return crypted, nil
 }
 
-func (c *Chiper) DecryptMessage(crypted []byte) ([]byte, error) {
-	chiper, err := aes.NewCipher(c.Key)
+func (c *Cipher) DecryptMessage(crypted []byte) ([]byte, error) {
+	block, err := aes.NewCipher(c.Key)
 	if err != nil {
 		fmt.Printf("Error: NewCipher(%d bytes) = %s", len(c.Key), err)
 		os.Exit(-1)
 	}
-	blockSize := chiper.BlockSize()
-	blockMode := cipher.NewCBCDecrypter(chiper, c.Key[:blockSize])
+	blockSize := block.BlockSize()
+	blockMode := cipher.NewCBCDecrypter(block, c.Key[:blockSize])
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
 	origData = cPKCS5UnPadding(origData)

@@ -14,10 +14,10 @@ const(
 )
 
 type Server struct{
-    conn *net.UDPConn
+    conn     *net.UDPConn
     messages chan string
-    clients map [int]Client
-    chiper core.Chiper
+    clients  map [int]Client
+    cipher   core.Cipher
 }
 
 type Client struct{
@@ -61,7 +61,7 @@ func (s *Server) handleMessage(){
 }
 
 func (s *Server) analyzeMessage(msg []byte) (m core.Message) {
-    msg,_ = s.chiper.DecryptMessage(msg)
+    msg,_ = s.cipher.DecryptMessage(msg)
     json.Unmarshal(msg, &m)
     return
 }
@@ -97,7 +97,7 @@ func main(){
     s.clients =make(map[int]Client,0)
 
     s.conn,err = net.ListenUDP("udp",udpAddr)
-    s.chiper.Key = []byte(KEY)
+    s.cipher.Key = []byte(KEY)
     checkError(err)
 
     go s.sendMessage()

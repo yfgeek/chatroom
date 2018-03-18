@@ -7,10 +7,7 @@ import(
     "time"
     "encoding/json"
     "../core"
-)
-
-const(
-	KEY string = "chatroom12345678"
+	"log"
 )
 
 type Client struct{
@@ -122,19 +119,27 @@ func checkError(err error, funcName string){
 }
 
 func main(){
-    if len(os.Args) != 2{
-        fmt.Fprintf(os.Stderr, "Usage:%s host:port", os.Args[0])
-        os.Exit(1)
-    }
-    service := os.Args[1]
-    udpAddr, err := net.ResolveUDPAddr("udp4",service)
+	log.SetFlags(log.Lshortfile)
+	config := &core.Config{}
+	config.ReadConfig()
+	key, err := core.ParsePassword(config.Key)
+
+	log.Println("使用配置：", fmt.Sprintf(`
+远程服务地址 remote：%s
+远程服务端口 port %s
+密码 password：%s
+	`, config.RemoteAddr,config.ListenAddr, key))
+
+    service := config.RemoteAddr + config.ListenAddr
+    udpAddr, err := net.ResolveUDPAddr("udp4", service)
     checkError(err,"main")
 
     var c Client
     c.gkey = true
-    c.chiper.Key = []byte (KEY)
+    c.chiper.Key = key[:]
     c.sendMessages = make(chan string)
     c.receiveMessages = make(chan string)
+
 
     fmt.Print("用户id: ")
     _,err = fmt.Scanln(&c.userID)
@@ -145,12 +150,10 @@ func main(){
 
     c.conn,err = net.DialUDP("udp",nil,udpAddr)
     checkError(err,"main")
-    //fmt.Println(c)
     defer c.conn.Close()
 
     c.func_sendMessage(1,c.userName + "进入聊天室")
 
-    //go c.getMessage()
     go c.printMessage()
     go c.receiveMessage()
 

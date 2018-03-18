@@ -6,11 +6,8 @@ import(
     "os"
     "encoding/json"
     "../core"
-)
-
-const(
-    PORT string = ":1200"
-    KEY string = "chatroom12345678"
+    "github.com/phayes/freeport"
+	"log"
 )
 
 type Server struct{
@@ -89,15 +86,49 @@ func checkError(err error){
 }
 
 func main(){
-    udpAddr, err := net.ResolveUDPAddr("udp4",PORT)
-    checkError(err)
+	log.SetFlags(log.Llongfile)
+
+	// 服务端监听端口随机生成
+	port, err := freeport.GetFreePort()
+	if err != nil {
+		// 随机端口失败就采用 7448
+		port = 1200
+	}
+	// 默认配置
+	k:=core.RandPassword()
+	config := &core.Config{
+		ListenAddr: fmt.Sprintf(":%d", port),
+		// 密码随机生成
+		Key: k.String(),
+	}
+	config.ReadConfig()
+	config.SaveConfig()
+
+	// 解析配置
+	key, err := core.ParsePassword(config.Key)
+
+	log.Println("使用配置：", fmt.Sprintf(`
+本地端口：
+%d
+密钥：
+%s
+	`, port, config.Key))
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+	udpAddr, err := net.ResolveUDPAddr("udp4",config.ListenAddr)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
     var s Server
     s.messages = make(chan string,20)
     s.clients =make(map[int]Client,0)
 
     s.conn,err = net.ListenUDP("udp",udpAddr)
-    s.cipher.Key = []byte(KEY)
+    s.cipher.Key = key[:]
     checkError(err)
 
     go s.sendMessage()

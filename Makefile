@@ -21,7 +21,7 @@ release:
 		go build
 		mv server ../bin
 		cd ../bin
-		tar czvf ../release/chatroom-mac64-${VERSION}.tar.gz *
+		tar czvf ../release/chatroom-mac64-1.0.tar.gz *
 		# Build for linux
 		go clean
 		rm -rf *.gz
@@ -32,7 +32,7 @@ release:
 		CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 		mv server ../bin
 		cd ../bin
-		tar czvf ../release/chatroom-linux64-${VERSION}.tar.gz *
+		tar czvf ../release/chatroom-linux64-1.0.tar.gz *
 		# Build for win
 		go clean
 		rm -rf *.gz
@@ -43,7 +43,7 @@ release:
 		CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build
 		mv server ../bin
 		cd ../bin
-		tar czvf ../release/chatroom-win64-${VERSION}.tar.gz *
+		tar czvf ../release/chatroom-win64-1.0.tar.gz *
 		go clean
 # Cleans our projects: deletes binaries
 clean:

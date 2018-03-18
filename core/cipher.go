@@ -4,12 +4,31 @@ import (
 	"crypto/cipher"
 	"bytes"
 	"fmt"
+	"math/rand"
 	"crypto/aes"
 	"os"
+	"encoding/base64"
+	"strings"
 )
+
+const PasswordLength = 32
+
+type Password [PasswordLength]byte
 
 type Cipher struct{
 	Key []byte
+}
+
+func RandPassword() Password {
+	intArr := rand.Perm(PasswordLength)
+	password := Password{}
+	for i, v := range intArr {
+		password[i] = byte(v)
+		if i == v {
+			return RandPassword()
+		}
+	}
+	return password
 }
 
 
@@ -52,4 +71,20 @@ func cPKCS5UnPadding(origData []byte) []byte {
 	length := len(origData)
 	unpadding := int(origData[length-1])
 	return origData[:(length - unpadding)]
+}
+
+func (password *Password) String() string {
+	return base64.StdEncoding.EncodeToString(password[:])
+}
+
+
+func ParsePassword(passwordString string) (Password, error) {
+	bs, err := base64.StdEncoding.DecodeString(strings.TrimSpace(passwordString))
+	if err != nil || len(bs) != PasswordLength {
+		os.Exit(-1)
+	}
+	password := Password{}
+	copy(password[:], bs)
+	bs = nil
+	return password, nil
 }

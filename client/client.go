@@ -27,11 +27,17 @@ type Message struct{
 	Content string
 }
 
+const(
+	NEW_USER = 1
+	NEW_MESSAGE = 2
+	DELETE_USER = 3
+)
+
 
 func (c *Client) func_sendMessage(sid int,msg string){
 
 	m:= core.Message{
-		Status:2,
+		Status:NEW_MESSAGE,
 		UserID:c.userID,
 		UserName: c.userName,
 		Content: msg,
@@ -128,7 +134,7 @@ func main(){
 远程服务地址 remote：%s
 远程服务端口 port %s
 密码 password：%s
-	`, config.RemoteAddr,config.ListenAddr, key))
+	`, config.RemoteAddr,config.ListenAddr, config.Key))
 
     service := config.RemoteAddr + config.ListenAddr
     udpAddr, err := net.ResolveUDPAddr("udp4", service)
@@ -152,7 +158,7 @@ func main(){
     checkError(err,"main")
     defer c.conn.Close()
 
-    c.func_sendMessage(1,c.userName + "进入聊天室")
+    c.func_sendMessage(NEW_USER,c.userName + "进入聊天室")
 
     go c.printMessage()
     go c.receiveMessage()
@@ -160,7 +166,7 @@ func main(){
     go c.sendMessage()
     c.getMessage()
 
-    c.func_sendMessage(3,c.userName + "离开聊天室")
+    c.func_sendMessage(DELETE_USER,c.userName + "离开聊天室")
     fmt.Println("退出成功!")
 
 

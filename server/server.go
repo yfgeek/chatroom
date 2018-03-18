@@ -24,6 +24,14 @@ type Client struct{
 
 }
 
+const(
+	NEW_USER = 1
+	NEW_MESSAGE = 2
+	DELETE_USER = 3
+)
+
+var userInitialID = 0
+
 func (s *Server) handleMessage(){
     var buf [512]byte
     n, addr, err := s.conn.ReadFromUDP(buf[0:])
@@ -36,19 +44,19 @@ func (s *Server) handleMessage(){
     m := s.analyzeMessage(msg)
     switch m.Status{
         //进入聊天室消息
-        case 1:
+        case NEW_USER:
             var c Client
             c.userAddr = addr
-            c.userID = m.UserID
+            c.userID = userInitialID
+			userInitialID++
             c.userName = m.UserName
             s.clients[c.userID] = c //添加用户
             s.messages <- string(msg)
-            fmt.Println("3")
         //用户发送消息
-        case 2:
+        case NEW_MESSAGE:
             s.messages <- string(msg)
         //client发来的退出消息
-        case 3:
+        case DELETE_USER:
             delete(s.clients, m.UserID)
             s.messages <- string(msg)
         default:
@@ -69,8 +77,7 @@ func (s *Server) sendMessage() {
         //daytime := time.Now().String()
         sendstr := msg
         for _,c := range s.clients {
-            fmt.Println(c)
-            fmt.Println("分发数据包",sendstr,c.userAddr)
+            fmt.Println("分发数据包",c.userAddr)
             n,err := s.conn.WriteToUDP([]byte(sendstr),c.userAddr)
             fmt.Println(n,err)
         }
@@ -87,6 +94,7 @@ func checkError(err error){
 
 func main(){
 	log.SetFlags(log.Llongfile)
+
 
 	// 服务端监听端口随机生成
 	port, err := freeport.GetFreePort()

@@ -6,3 +6,4 @@ type Message struct{
 	UserName string
 	Content string
 }
+

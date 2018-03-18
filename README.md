@@ -48,6 +48,6 @@
 
 ## 参考
 
-[https://github.com/digitalis-io/golang-udp-chat](http://github.com/golang-udp-chat)
+[https://github.com/digitalis-io/golang-udp-chat](https://github.com/digitalis-io/golang-udp-chat)
 
- 
+[https://github.com/gwuhaolin/lightsocks](https://github.com/gwuhaolin/lightsocks)

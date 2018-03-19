@@ -25,9 +25,9 @@ type Client struct{
 }
 
 const(
-	NEW_USER = 1
-	NEW_MESSAGE = 2
-	DELETE_USER = 3
+	NEW_USER = iota + 1
+	NEW_MESSAGE
+	DELETE_USER
 )
 
 var userInitialID = 0

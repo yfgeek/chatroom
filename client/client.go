@@ -12,7 +12,7 @@ import(
 
 type Client struct{
     conn *net.UDPConn
-    gkey bool   //用来判断用户退出
+    gkey bool
     userID int
     userName string
     sendMessages chan string
@@ -129,10 +129,10 @@ func main(){
 	config.ReadConfig()
 	key, err := core.ParsePassword(config.Key)
 
-	log.Println("使用配置：", fmt.Sprintf(`
-远程服务地址 remote：%s
-远程服务端口 port %s
-密码 password：%s
+	log.Println("Configruation", fmt.Sprintf(`
+Remote Server：%s
+Remote Server Port %s
+Key：%s
 	`, config.RemoteAddr,config.ListenAddr, config.Key))
 
     service := config.RemoteAddr + config.ListenAddr
@@ -146,10 +146,10 @@ func main(){
     c.receiveMessages = make(chan string)
 
 
-    fmt.Print("用户id: ")
+    fmt.Print("ID: ")
     _,err = fmt.Scanln(&c.userID)
     checkError(err,"main")
-    fmt.Print("用户昵称: ")
+    fmt.Print("Nickname: ")
     _,err = fmt.Scanln(&c.userName)
     checkError(err,"main")
 
@@ -157,7 +157,7 @@ func main(){
     checkError(err,"main")
     defer c.conn.Close()
 
-    c.func_sendMessage(NEW_USER,c.userName + "进入聊天室")
+    c.func_sendMessage(NEW_USER,c.userName + "joined the group")
 
     go c.printMessage()
     go c.receiveMessage()
@@ -165,8 +165,8 @@ func main(){
     go c.sendMessage()
     c.getMessage()
 
-    c.func_sendMessage(DELETE_USER,c.userName + "离开聊天室")
-    fmt.Println("退出成功!")
+    c.func_sendMessage(DELETE_USER,c.userName + "left the group")
+    fmt.Println("Exited")
 
 
     os.Exit(0)

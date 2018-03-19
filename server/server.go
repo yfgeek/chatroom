@@ -39,28 +39,24 @@ func (s *Server) handleMessage(){
         return
     }
     msg := buf[0:n]
-    //分析消息
-    fmt.Println("收到数据包",msg)
+    fmt.Println("Got the packet",msg)
     m := s.analyzeMessage(msg)
     switch m.Status{
-        //进入聊天室消息
         case NEW_USER:
             var c Client
             c.userAddr = addr
             c.userID = userInitialID
 			userInitialID++
             c.userName = m.UserName
-            s.clients[c.userID] = c //添加用户
+            s.clients[c.userID] = c
             s.messages <- string(msg)
-        //用户发送消息
         case NEW_MESSAGE:
             s.messages <- string(msg)
-        //client发来的退出消息
         case DELETE_USER:
             delete(s.clients, m.UserID)
             s.messages <- string(msg)
         default:
-            fmt.Println("未识别消息", string(msg))
+            fmt.Println("Cannot read the message:", string(msg))
     }
 
 }
@@ -77,7 +73,7 @@ func (s *Server) sendMessage() {
         //daytime := time.Now().String()
         sendstr := msg
         for _,c := range s.clients {
-            fmt.Println("分发数据包",c.userAddr)
+            fmt.Println("Transfer the packet",c.userAddr)
             n,err := s.conn.WriteToUDP([]byte(sendstr),c.userAddr)
             fmt.Println(n,err)
         }
@@ -94,15 +90,13 @@ func checkError(err error){
 
 func main(){
 	log.SetFlags(log.Llongfile)
-
-
-	// 服务端监听端口随机生成
+	// Generate a random server port
 	port, err := freeport.GetFreePort()
 	if err != nil {
 		// 随机端口失败就采用 7448
 		port = 1200
 	}
-	// 默认配置
+	// Default config
 	k:=core.RandPassword()
 	config := &core.Config{
 		ListenAddr: fmt.Sprintf(":%d", port),
@@ -112,13 +106,13 @@ func main(){
 	config.ReadConfig()
 	config.SaveConfig()
 
-	// 解析配置
+	// Parse the config
 	key, err := core.ParsePassword(config.Key)
 
-	log.Println("使用配置：", fmt.Sprintf(`
-本地端口：
+	log.Println("Configruation", fmt.Sprintf(`
+Server Port：
 %d
-密钥：
+Key：
 %s
 	`, port, config.Key))
 

@@ -1,24 +1,20 @@
-# Chat Room
+# UDP加密聊天室
 
-An AES-256 encrypted chatroom server & client based on UDP
+## 功能
 
-[简体中文](README-CN.md)
-
-## Features
-
-- [x] UDP protocol
-- [x] Communication with the Json file between C & S
-- [x] Local configuration with Json format
-- [x] AES-256 encryption
-- [x] random KEY when running the server
+- [x] UDP协议通信
+- [x] Json格式通信
+- [x] AES-256加密通信
+- [x] 客户端/服务器读取本地配置文件
+- [x] 密钥随机生成
 
 
 
-## Client
+## 客户端
 
-The client configuration file located at `~\chat-config.json`. 
+配置文件位于`~\chat-config.json`
 
-Sample
+例子
 ```json
 {
 	"listen": ":52915",
@@ -26,21 +22,21 @@ Sample
 	"key": "AzonXhdbWCYoAA52GTE9FnldZEN4KhEsInFJe1oHYAgzQTRsCyEdUlBOPzd3HxgFbTAudDZobiU8TQYbURBFWVdvMisNSn5UIw8kei0gcjl1cGkeFTV9U0tEY2YaCkdPYl9nZRQSBGsMQgFzVlxhL0hGAlV/O0A+OGoJfBwpE0w="
 }
 ```
-The user should set his ID and nickname when running the client.
+启动客户端后需要配置用户id和昵称
 
 ``
 ./client
 ``
 
-## Server 
+## 服务端
 
-The client configuration file located at`~\chat-config.json`.
+配置文件位于`~\chat-config.json`
 
-Sample
+例子
 ```json
 {
 	"listen": ":52915",
-	"remote": "", //can be empty
+	"remote": "", //随意可不填
 	"key": "AzonXhdbWCYoAA52GTE9FnldZEN4KhEsInFJe1oHYAgzQTRsCyEdUlBOPzd3HxgFbTAudDZobiU8TQYbURBFWVdvMisNSn5UIw8kei0gcjl1cGkeFTV9U0tEY2YaCkdPYl9nZRQSBGsMQgFzVlxhL0hGAlV/O0A+OGoJfBwpE0w="
 }
 ```
@@ -50,7 +46,7 @@ Sample
 ``
 
 
-## Reference
+## 参考
 
 [https://github.com/digitalis-io/golang-udp-chat](https://github.com/digitalis-io/golang-udp-chat)
 

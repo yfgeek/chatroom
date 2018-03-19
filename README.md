@@ -12,7 +12,7 @@ An AES-256 encrypted chatroom server & client based on UDP
 ## Features
 
 - [x] UDP protocol
-- [x] Communication with the Json file between C & S
+- [x] Communication with Json format between C & S
 - [x] Local configuration with Json format
 - [x] AES-256 encryption
 - [x] random KEY when running the server

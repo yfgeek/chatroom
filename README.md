@@ -4,6 +4,11 @@ An AES-256 encrypted chatroom server & client based on UDP
 
 [简体中文](README-CN.md)
 
+
+# Language
+
+* Golang ![golang](http://i.imgur.com/UEdZpr4.png)
+
 ## Features
 
 - [x] UDP protocol
@@ -11,7 +16,6 @@ An AES-256 encrypted chatroom server & client based on UDP
 - [x] Local configuration with Json format
 - [x] AES-256 encryption
 - [x] random KEY when running the server
-
 
 
 ## Client

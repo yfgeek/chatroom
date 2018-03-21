@@ -36,7 +36,7 @@ const(
 func (c *Client) func_sendMessage(sid int,msg string){
 
 	m:= core.Message{
-		Status:NEW_MESSAGE,
+		Status:sid,
 		UserID:c.userID,
 		UserName: c.userName,
 		Content: msg,
@@ -58,7 +58,7 @@ func (c *Client) sendMessage() {
     for c.gkey {
         msg := <- c.sendMessages
 		m:= core.Message{
-			Status:1,
+			Status:NEW_MESSAGE,
 			UserID:c.userID,
 			UserName: c.userName,
 			Content: msg,

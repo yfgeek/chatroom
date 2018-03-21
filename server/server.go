@@ -111,10 +111,10 @@ func main(){
 
 	log.Println("Configruation", fmt.Sprintf(`
 Server Port：
-%d
+%s
 Key：
 %s
-	`, port, config.Key))
+	`, config.ListenAddr, config.Key))
 
 	if err != nil {
 		log.Fatalln(err)
